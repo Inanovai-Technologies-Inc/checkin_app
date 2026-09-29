@@ -78,21 +78,27 @@ class TestTimeTracking(FrappeTestCase):
 
 	@classmethod
 	def _make_project(cls, title):
-		return frappe.get_doc(
-			{
-				"doctype": "Project",
-				"project_name": title,
-				"status": "Open",
-				"is_active": "Yes",
-				"company": cls.company,
-			}
-		).insert(ignore_permissions=True).name
+		return (
+			frappe.get_doc(
+				{
+					"doctype": "Project",
+					"project_name": title,
+					"status": "Open",
+					"is_active": "Yes",
+					"company": cls.company,
+				}
+			)
+			.insert(ignore_permissions=True)
+			.name
+		)
 
 	@classmethod
 	def _make_task(cls, subject, project):
-		return frappe.get_doc(
-			{"doctype": "Task", "subject": subject, "project": project, "status": "Open"}
-		).insert(ignore_permissions=True).name
+		return (
+			frappe.get_doc({"doctype": "Task", "subject": subject, "project": project, "status": "Open"})
+			.insert(ignore_permissions=True)
+			.name
+		)
 
 	# -- per-test isolation ------------------------------------------------
 	#
@@ -135,9 +141,7 @@ class TestTimeTracking(FrappeTestCase):
 	def test_a_start_and_stop_logs_the_elapsed_time(self):
 		before = self.actual_time(self.task_a)
 
-		segment = self.call(
-			time_tracking.start_timer, at(6, 9), self.project_a, self.activity_a, self.task_a
-		)
+		segment = self.call(time_tracking.start_timer, at(6, 9), self.project_a, self.activity_a, self.task_a)
 
 		self.assertEqual(segment["project"], self.project_a)
 		self.assertEqual(segment["activity_type"], self.activity_a)
@@ -217,9 +221,7 @@ class TestTimeTracking(FrappeTestCase):
 		self.call(time_tracking.start_timer, at(9, 9), self.project_a, self.activity_a, self.task_a)
 
 		with self.assertRaises(frappe.ValidationError) as caught:
-			self.call(
-				time_tracking.start_timer, at(9, 9, 30), self.project_b, self.activity_b, self.task_c
-			)
+			self.call(time_tracking.start_timer, at(9, 9, 30), self.project_b, self.activity_b, self.task_c)
 
 		self.assertIn("Change Work", str(caught.exception))
 
@@ -232,9 +234,7 @@ class TestTimeTracking(FrappeTestCase):
 
 	def test_e_task_from_another_project_is_refused(self):
 		with self.assertRaises(frappe.ValidationError) as caught:
-			self.call(
-				time_tracking.start_timer, at(10, 9), self.project_a, self.activity_a, self.task_c
-			)
+			self.call(time_tracking.start_timer, at(10, 9), self.project_a, self.activity_a, self.task_c)
 
 		self.assertIn("belongs to Project", str(caught.exception))
 		self.assertIsNone(time_tracking.get_active_timer(), "a rejected start must not open a timer")

@@ -126,9 +126,7 @@ def _create_activity_types():
 		if frappe.db.exists("Activity Type", name):
 			continue
 
-		frappe.get_doc({"doctype": "Activity Type", "activity_type": name}).insert(
-			ignore_permissions=True
-		)
+		frappe.get_doc({"doctype": "Activity Type", "activity_type": name}).insert(ignore_permissions=True)
 		created.append(name)
 
 	return created
