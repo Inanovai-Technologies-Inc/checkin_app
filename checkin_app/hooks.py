@@ -1,8 +1,8 @@
 app_name = "checkin_app"
 app_title = "Checkin App"
-app_publisher = "Inanovai Technologies"
+app_publisher = "Inanovai"
 app_description = "Custom check-in application"
-app_email = "akshitha.nr@inanovai.com"
+app_email = "thrisha.shetty@inanovai.com"
 app_license = "mit"
 
 # Apps
@@ -112,6 +112,12 @@ app_license = "mit"
 # See frappe.core.notifications.get_notification_config
 
 # notification_config = "checkin_app.notifications.get_notification_config"
+
+# Awesome Bar
+# -----------
+# Extra search results: list of dicts with label, description, route, index.
+# route: ["List", "ToDo"], "/desk/docs/some/page", or "https://example.com"
+# awesomebar_search = ["checkin_app.search.awesomebar_results"]
 
 # Permissions
 # -----------

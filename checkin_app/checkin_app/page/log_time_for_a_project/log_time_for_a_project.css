@@ -1,0 +1,223 @@
+/* Log Time for a Project — scoped to .ltp-root so nothing else in Desk is affected.
+   Uses Frappe's own CSS custom properties so light/dark themes follow the site theme. */
+
+.ltp-root {
+	max-width: 900px;
+	margin: 0 auto;
+	padding: var(--padding-md) 0;
+}
+
+.ltp-root .hidden {
+	display: none !important;
+}
+
+/* ---------- Cards ---------- */
+
+.ltp-root .ltp-card {
+	background-color: var(--card-bg);
+	border: 1px solid var(--border-color);
+	border-radius: var(--border-radius-md);
+	box-shadow: var(--card-shadow);
+	margin-bottom: var(--margin-md);
+}
+
+.ltp-root .ltp-card-head {
+	padding: var(--padding-md) var(--padding-lg);
+	border-bottom: 1px solid var(--border-color);
+}
+
+.ltp-root .ltp-card-title {
+	margin: 0;
+	font-size: var(--text-md);
+	font-weight: 600;
+	color: var(--heading-color);
+	display: inline-block;
+}
+
+.ltp-root .ltp-selection-hint {
+	font-size: var(--text-sm);
+	margin-top: var(--margin-xs);
+}
+
+.ltp-root .ltp-card-body {
+	padding: var(--padding-lg);
+}
+
+.ltp-root .ltp-card-foot {
+	padding: var(--padding-md) var(--padding-lg);
+	border-top: 1px solid var(--border-color);
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--margin-sm);
+	flex-wrap: wrap;
+}
+
+/* ---------- Active timer card ---------- */
+
+.ltp-root .ltp-active {
+	border-color: var(--primary);
+}
+
+.ltp-root .ltp-active .ltp-card-head {
+	display: flex;
+	align-items: center;
+	gap: var(--margin-sm);
+}
+
+.ltp-root .ltp-live-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background-color: var(--green-500);
+	display: inline-block;
+	flex-shrink: 0;
+	animation: ltp-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes ltp-pulse {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.25; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ltp-root .ltp-live-dot { animation: none; }
+}
+
+.ltp-root .ltp-active .ltp-card-body {
+	display: flex;
+	gap: var(--margin-lg);
+	align-items: flex-start;
+	justify-content: space-between;
+	flex-wrap: wrap;
+}
+
+.ltp-root .ltp-facts {
+	display: flex;
+	flex-direction: column;
+	gap: var(--margin-sm);
+	min-width: 240px;
+	flex: 1 1 260px;
+}
+
+.ltp-root .ltp-fact-label {
+	font-size: var(--text-sm);
+	color: var(--text-muted);
+	margin-bottom: 2px;
+}
+
+.ltp-root .ltp-fact-value {
+	font-size: var(--text-base);
+	color: var(--text-color);
+	font-weight: 500;
+	word-break: break-word;
+}
+
+.ltp-root .ltp-clock {
+	text-align: right;
+	flex: 0 0 auto;
+	min-width: 200px;
+}
+
+.ltp-root .ltp-started {
+	margin-bottom: var(--margin-sm);
+}
+
+.ltp-root .ltp-started-value {
+	font-size: var(--text-base);
+	color: var(--text-color);
+	margin-left: var(--margin-xs);
+	font-weight: 500;
+}
+
+.ltp-root .ltp-elapsed-label {
+	font-size: var(--text-sm);
+	color: var(--text-muted);
+}
+
+.ltp-root .ltp-elapsed {
+	font-size: 34px;
+	line-height: 1.2;
+	font-weight: 600;
+	color: var(--heading-color);
+	font-variant-numeric: tabular-nums;
+	font-feature-settings: "tnum";
+	letter-spacing: 0.5px;
+}
+
+/* Compact form of the active card, used while "Change Work" is open */
+.ltp-root .ltp-active.ltp-compact .ltp-elapsed {
+	font-size: var(--text-xl);
+}
+
+.ltp-root .ltp-active.ltp-compact .ltp-card-foot {
+	display: none;
+}
+
+/* ---------- Selection form ---------- */
+
+.ltp-root .ltp-field-row {
+	display: flex;
+	gap: var(--margin-md);
+	flex-wrap: wrap;
+}
+
+.ltp-root .ltp-field {
+	flex: 1 1 260px;
+	min-width: 0;
+	margin-bottom: var(--margin-sm);
+}
+
+.ltp-root .ltp-field .form-group {
+	margin-bottom: 0;
+}
+
+.ltp-root .ltp-field-spacer {
+	visibility: hidden;
+}
+
+/* A disabled dependent control should read as waiting, not broken. */
+.ltp-root .ltp-field .control-input input[disabled] {
+	background-color: var(--control-bg);
+	cursor: not-allowed;
+}
+
+/* ---------- Degraded-mode banner ---------- */
+
+.ltp-root .ltp-degraded {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--margin-sm);
+	padding: var(--padding-sm) var(--padding-md);
+	margin-bottom: var(--margin-md);
+	border-radius: var(--border-radius-md);
+	background-color: var(--bg-yellow);
+	color: var(--text-color);
+	font-size: var(--text-sm);
+	border: 1px solid var(--yellow-300);
+}
+
+.ltp-root .ltp-degraded-icon {
+	flex-shrink: 0;
+	line-height: 1.4;
+}
+
+/* ---------- Narrow screens ---------- */
+
+@media (max-width: 620px) {
+	.ltp-root .ltp-active .ltp-card-body {
+		flex-direction: column;
+	}
+
+	.ltp-root .ltp-clock {
+		text-align: left;
+		min-width: 0;
+	}
+
+	.ltp-root .ltp-card-foot {
+		justify-content: stretch;
+	}
+
+	.ltp-root .ltp-card-foot .btn {
+		flex: 1 1 auto;
+	}
+}

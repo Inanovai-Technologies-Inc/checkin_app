@@ -1,7 +1,7 @@
 [project]
 name = "checkin_app"
 authors = [
-    { name = "Inanovai Technologies", email = "akshitha.nr@inanovai.com"}
+    { name = "Inanovai", email = "thrisha.shetty@inanovai.com"}
 ]
 description = "Custom check-in application"
 requires-python = ">=3.10"
