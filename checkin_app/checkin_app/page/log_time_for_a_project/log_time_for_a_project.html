@@ -1,0 +1,78 @@
+<div class="ltp-root">
+	<!-- Backend availability banner (shown only in degraded mode) -->
+	<div class="ltp-degraded hidden">
+		<span class="ltp-degraded-icon">&#9888;</span>
+		<span class="ltp-degraded-text"></span>
+	</div>
+
+	<!-- ACTIVE TIMER CARD -->
+	<div class="ltp-card ltp-active hidden">
+		<div class="ltp-card-head">
+			<span class="ltp-live-dot"></span>
+			<h5 class="ltp-card-title">{%= __("Current Work") %}</h5>
+		</div>
+
+		<div class="ltp-card-body">
+			<div class="ltp-facts">
+				<div class="ltp-fact">
+					<div class="ltp-fact-label">{%= __("Project") %}</div>
+					<div class="ltp-fact-value ltp-cur-project">&mdash;</div>
+				</div>
+				<div class="ltp-fact">
+					<div class="ltp-fact-label">{%= __("Activity") %}</div>
+					<div class="ltp-fact-value ltp-cur-activity">&mdash;</div>
+				</div>
+				<div class="ltp-fact">
+					<div class="ltp-fact-label">{%= __("Task") %}</div>
+					<div class="ltp-fact-value ltp-cur-task">&mdash;</div>
+				</div>
+			</div>
+
+			<div class="ltp-clock">
+				<div class="ltp-started">
+					<span class="ltp-fact-label">{%= __("Started") %}</span>
+					<span class="ltp-started-value">&mdash;</span>
+				</div>
+				<div class="ltp-elapsed-label">{%= __("Elapsed") %}</div>
+				<div class="ltp-elapsed" title="{%= __("Elapsed time") %}">00:00:00</div>
+			</div>
+		</div>
+
+		<div class="ltp-card-foot">
+			<button class="btn btn-default btn-sm ltp-change-work">{%= __("Change Work") %}</button>
+			<button class="btn btn-danger btn-sm ltp-stop-timer">{%= __("Stop Timer") %}</button>
+		</div>
+	</div>
+
+	<!-- SELECTION FORM -->
+	<div class="ltp-card ltp-selection">
+		<div class="ltp-card-head">
+			<h5 class="ltp-card-title ltp-selection-title">{%= __("Log Time for a Project") %}</h5>
+			<div class="ltp-selection-hint text-muted">
+				{%= __("Pick a Project, then an Activity Type, then a Task.") %}
+			</div>
+		</div>
+
+		<div class="ltp-card-body">
+			<div class="ltp-field-row">
+				<div class="ltp-field" data-field="project"></div>
+				<div class="ltp-field" data-field="activity_type"></div>
+			</div>
+			<div class="ltp-field-row">
+				<div class="ltp-field" data-field="task"></div>
+				<div class="ltp-field" data-field="date"></div>
+			</div>
+			<div class="ltp-field-row ltp-manual-row">
+				<div class="ltp-field" data-field="hours"></div>
+				<div class="ltp-field ltp-field-spacer"></div>
+			</div>
+		</div>
+
+		<div class="ltp-card-foot">
+			<button class="btn btn-default btn-sm ltp-cancel-change hidden">{%= __("Cancel") %}</button>
+			<button class="btn btn-default btn-sm ltp-submit-time">{%= __("Submit Time") %}</button>
+			<button class="btn btn-primary btn-sm ltp-start-timer">{%= __("Start Work Timer") %}</button>
+			<button class="btn btn-primary btn-sm ltp-switch-work hidden">{%= __("Switch Work") %}</button>
+		</div>
+	</div>
+</div>
