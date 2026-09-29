@@ -1,5 +1,14 @@
 # Phase 1 — Backend contract for "Log Time for a Project"
 
+> **Status: implemented.** All five methods are live in `checkin_app/api/time_tracking.py`;
+> the 417 banner described in §3 no longer appears. See
+> [PHASE1_BACKEND_API.md](PHASE1_BACKEND_API.md) for what was built, including the
+> `project_query` hook offered in §1.
+>
+> **One change to this contract:** `log_time` now also takes optional `from_time` and
+> `to_time`, and the page gained two controls to collect them, so a manual entry records
+> real clock times. The original `hours` + `date` call still works unchanged.
+
 The desk page `log-time-for-a-project` is implemented and working. It contains **no
 Timesheet logic**. This document specifies the five whitelisted methods it calls, so the
 backend can be built against a fixed interface.

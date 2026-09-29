@@ -147,6 +147,33 @@ checkin_app.time_tracking.TimeTracker = class TimeTracker {
 		});
 		this.date_field.set_value(frappe.datetime.get_today());
 
+		// From / To Time record when the work actually happened. Filling both
+		// derives Hours Worked; leaving them empty falls back to Hours alone,
+		// which the backend places after the day's last entry.
+		this.from_time_field = frappe.ui.form.make_control({
+			parent: this.$root.find('[data-field="from_time"]'),
+			render_input: true,
+			df: {
+				fieldname: "from_time",
+				label: __("From Time"),
+				fieldtype: "Time",
+				description: __("When you started. Optional."),
+				onchange: () => me.sync_hours_from_times(),
+			},
+		});
+
+		this.to_time_field = frappe.ui.form.make_control({
+			parent: this.$root.find('[data-field="to_time"]'),
+			render_input: true,
+			df: {
+				fieldname: "to_time",
+				label: __("To Time"),
+				fieldtype: "Time",
+				description: __("When you finished. Optional."),
+				onchange: () => me.sync_hours_from_times(),
+			},
+		});
+
 		this.hours_field = frappe.ui.form.make_control({
 			parent: this.$root.find('[data-field="hours"]'),
 			render_input: true,
@@ -184,9 +211,30 @@ checkin_app.time_tracking.TimeTracker = class TimeTracker {
 			task: this.task_field,
 			date: this.date_field,
 			hours: this.hours_field,
+			from_time: this.from_time_field,
+			to_time: this.to_time_field,
 		}[fieldname];
 
 		return field ? field.get_value() : null;
+	}
+
+	// Both times given? Then the duration is a fact, not an estimate — show it
+	// in Hours Worked so the employee sees what will be logged before they
+	// submit. The backend derives it again rather than trusting this value.
+	sync_hours_from_times() {
+		const from_time = this.get_value("from_time");
+		const to_time = this.get_value("to_time");
+
+		if (from_time && to_time) {
+			const date = this.get_value("date") || frappe.datetime.get_today();
+			const start = frappe.datetime.str_to_obj(`${date} ${from_time}`);
+			const end = frappe.datetime.str_to_obj(`${date} ${to_time}`);
+			const hours = (end - start) / 3600000;
+
+			this.hours_field.set_value(hours > 0 ? flt(hours, 2) : 0);
+		}
+
+		this.update_action_state();
 	}
 
 	on_project_change() {
@@ -226,6 +274,8 @@ checkin_app.time_tracking.TimeTracker = class TimeTracker {
 		this.activity_type_field.set_value("");
 		this.task_field.set_value("");
 		this.hours_field.set_value(0);
+		this.from_time_field.set_value("");
+		this.to_time_field.set_value("");
 		this.toggle_task_field(false);
 		this.update_action_state();
 	}
@@ -524,13 +574,22 @@ checkin_app.time_tracking.TimeTracker = class TimeTracker {
 		if (!(hours > 0)) {
 			frappe.msgprint({
 				title: __("Hours Worked required"),
-				message: __("Enter the number of hours worked, or use Start Work Timer instead."),
+				message: __(
+					"Enter a From Time and a To Time, or the number of hours worked. Or use Start Work Timer instead."
+				),
 				indicator: "orange",
 			});
 			return;
 		}
 
-		const args = Object.assign(this.get_selection(), { hours: hours, date: date });
+		// Send the clock times when the employee gave them, so the Timesheet
+		// records when the work happened rather than a placeholder slot.
+		const args = Object.assign(this.get_selection(), {
+			hours: hours,
+			date: date,
+			from_time: this.get_value("from_time") || null,
+			to_time: this.get_value("to_time") || null,
+		});
 
 		this.call_backend(BACKEND.log_time, args, {
 			freeze: true,
