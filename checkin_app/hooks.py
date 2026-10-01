@@ -8,7 +8,7 @@ app_license = "mit"
 # Apps
 # ------------------
 
-# required_apps = []
+required_apps = ["erpnext"]
 
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [
@@ -175,7 +175,7 @@ app_license = "mit"
 # Testing
 # -------
 
-# before_tests = "checkin_app.install.before_tests"
+before_tests = "checkin_app.install.before_tests"
 
 # Overriding Methods
 # ------------------------------
@@ -252,4 +252,3 @@ app_license = "mit"
 # ------------
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
-
