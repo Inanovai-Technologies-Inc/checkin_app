@@ -12,6 +12,7 @@ Every step is idempotent, so re-running it adds only what is missing.
 """
 
 import frappe
+from frappe import _
 
 ACTIVITY_TYPES = [
 	"Development",
@@ -57,7 +58,7 @@ def create_sample_data(company=None, user=None):
 	company = company or frappe.defaults.get_global_default("company") or _first("Company")
 
 	if not company:
-		frappe.throw("No Company on this site; create one before seeding sample data.")
+		frappe.throw(_("No Company on this site; create one before seeding sample data."))
 
 	created = {
 		"activity_types": _create_activity_types(),

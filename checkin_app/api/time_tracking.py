@@ -31,6 +31,7 @@ from frappe import _
 from frappe.query_builder import DocType, Order
 from frappe.query_builder.functions import Max
 from frappe.utils import (
+	cint,
 	flt,
 	get_datetime,
 	get_time,
@@ -307,7 +308,7 @@ def get_active_timer():
 
 
 @frappe.whitelist()
-def start_timer(project, activity_type, task=None):
+def start_timer(project: str, activity_type: str, task: str | None = None):
 	"""Open a new work session. Refuses if one is already running."""
 	employee = _require_employee()
 	project, activity_type, task = _validate_selection(project, activity_type, task)
@@ -329,7 +330,7 @@ def start_timer(project, activity_type, task=None):
 
 
 @frappe.whitelist()
-def change_work(project, activity_type, task=None):
+def change_work(project: str, activity_type: str, task: str | None = None):
 	"""Close the running segment and open the next one, in one transaction.
 
 	Both rows live on the same Timesheet, so the switch either happens entirely
@@ -385,7 +386,15 @@ def stop_timer():
 
 
 @frappe.whitelist()
-def log_time(project, activity_type, task=None, hours=None, date=None, from_time=None, to_time=None):
+def log_time(
+	project: str,
+	activity_type: str,
+	task: str | None = None,
+	hours: float | str | None = None,
+	date: str | None = None,
+	from_time: str | None = None,
+	to_time: str | None = None,
+):
 	"""Record completed work without a timer.
 
 	Real clock times are recorded whenever the caller knows them:
@@ -502,7 +511,7 @@ def get_activity_types():
 
 
 @frappe.whitelist()
-def get_tasks(project):
+def get_tasks(project: str):
 	"""Tasks belonging to `project` -- and only to `project`."""
 	project = (project or "").strip()
 
@@ -526,7 +535,9 @@ def get_tasks(project):
 
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
-def project_query(doctype, txt, searchfield, start, page_len, filters):
+def project_query(
+	doctype: str, txt: str, searchfield: str, start: int, page_len: int, filters: dict | None = None
+):
 	"""Link-field search for Project, scoped to the employee's company.
 
 	Wire it up from the page with::
@@ -536,21 +547,23 @@ def project_query(doctype, txt, searchfield, start, page_len, filters):
 	employee = _require_employee()
 	company = _company_for(employee)
 
-	conditions = ["p.status = 'Open'", "p.is_active = 'Yes'"]
-	values = {"txt": f"%{txt}%", "start": start, "page_len": page_len}
+	project = DocType("Project")
+	pattern = f"%{txt}%"
+
+	query = (
+		frappe.qb.from_(project)
+		.select(project.name, project.project_name)
+		.where(
+			(project.status == "Open")
+			& (project.is_active == "Yes")
+			& (project.name.like(pattern) | project.project_name.like(pattern))
+		)
+		.orderby(project.modified, order=Order.desc)
+		.limit(cint(page_len))
+		.offset(cint(start))
+	)
 
 	if company:
-		conditions.append("p.company = %(company)s")
-		values["company"] = company
+		query = query.where(project.company == company)
 
-	return frappe.db.sql(
-		"""
-		select p.name, p.project_name
-		from `tabProject` p
-		where {conditions}
-			and (p.name like %(txt)s or p.project_name like %(txt)s)
-		order by p.modified desc
-		limit %(start)s, %(page_len)s
-		""".format(conditions=" and ".join(conditions)),
-		values,
-	)
+	return query.run()
